@@ -1,0 +1,80 @@
+import cv2
+
+# read the image
+image = cv2.imread('image_1.jpg')
+# convert the image to grayscale format
+img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# apply binary thresholding
+ret, thresh = cv2.threshold(img_gray, 150, 255, cv2.THRESH_BINARY)
+# visualize the binary image
+# cv2.imshow('Binary image', thresh)
+
+contours, hierarchy = cv2.findContours(image=thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_NONE)
+# draw contours on the original image
+image_copy = image.copy()
+cv2.drawContours(image=image_copy, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=2,
+                 lineType=cv2.LINE_AA)
+# see the results
+cv2.imshow('None approximation', image_copy)
+cv2.imwrite('image_1.jpg', image_copy)
+# cv2.imwrite('image_1.jpg', thresh)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+
+import cv2
+import numpy as np
+
+# Let's load a simple image with 3 black squares
+image = cv2.imread('image_1.jpg')
+cv2.waitKey(0)
+
+# Grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Find Canny edges
+edged = cv2.Canny(gray, 30, 200)
+cv2.waitKey(0)
+
+# Finding Contours
+# Use a copy of the image e.g. edged.copy()
+# since findContours alters the image
+contours, hierarchy = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+cv2.imshow('Canny Edges After Contouring', edged)
+cv2.waitKey(0)
+
+print("Number of Contours found = " + str(len(contours)))
+
+# Draw all contours
+# -1 signifies drawing all contours
+cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
+
+cv2.imshow('Contours', image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+import cv2
+import numpy as np
+
+# Load image, grayscale, Otsu's threshold
+image = cv2.imread('image_1.jpg')
+original = image.copy()
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+
+# Find contours, obtain bounding box, extract and save ROI
+ROI_number = 0
+cnts = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+for c in cnts:
+    x,y,w,h = cv2.boundingRect(c)
+    cv2.rectangle(image, (x, y), (x + w, y + h), (36,255,12), 2)
+    ROI = original[y:y+h, x:x+w]
+    cv2.imwrite('image_1.jpg'.format(ROI_number), ROI)
+    ROI_number += 1
+
+cv2.imshow('image', image)
+cv2.waitKey()

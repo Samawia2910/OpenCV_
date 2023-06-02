@@ -1,0 +1,4 @@
+python polygon_detect.py --weights polygon-yolov5s-ucas.pt --img 1024 --conf 0.75 --source data/images/UCAS-AOD --iou-thres 0.4 --hide-labels
+python polygon_detect.py --weights polygon-yolov5s-ucas.pt --img 1024 --conf 0.75 --source data/images/UCAS-AOD --iou-thres 0.4 --hide-labels
+python detect.py --weights yolov5s.pt --img 640 --conf 0.25 --source data/images
+python polygon_test.py --weights polygon-yolov5s-ucas.pt --data polygon_ucas.yaml --img 1024 --iou 0.65 --task val
